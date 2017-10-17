@@ -15,7 +15,7 @@ let walk = (dir, done) => {
   if (!fs.existsSync(newdir)) {
     fs.mkdirSync(newdir);
   }
-  
+
   fs.readdir(dir, (err, list) => {
     if (err) {
       return done(err);
@@ -26,7 +26,7 @@ let walk = (dir, done) => {
       if (!filename)
         return done(null);
 
-      filepath = dir + '/' + filename;
+      let filepath = dir + '/' + filename;
       fs.stat(filepath, (err, stat) => {
         if (stat && stat.isDirectory()) {
           // recurse down a directory
@@ -34,7 +34,7 @@ let walk = (dir, done) => {
             next();
           });
         } else {
-
+          // process new file
           let newpath = newdir + '/' + filename;
           processFile(filepath, newpath);
           next();
