@@ -6,13 +6,11 @@ console.log("Starting...");
 
 // credit: https://gist.github.com/adamwdraper/4212319
 let walk = (dir, done) => {
-  fs.readdir(dir, function (error, list) {
+  fs.readdir(dir, (error, list) => {
     if (error) {
       return done(error);
     }
-
     let i = 0;
-
     let next = () => {
       let file = list[i++];
 
@@ -42,8 +40,8 @@ let walk = (dir, done) => {
 };
 
 // optional command line params
-//      source for walk path
-process.argv.forEach(function (val, index, array) {
+// source for walk path
+process.argv.forEach((val, index, array) => {
   if (val.indexOf('source') !== -1) {
     walkPath = val.split('=')[1];
   }
