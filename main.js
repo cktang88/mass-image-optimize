@@ -2,12 +2,12 @@ const sharp = require('sharp');
 const fs = require('fs');
 const sizeOf = require('image-size');
 
-let {max_width, max_height, basedir} = require('./config.js');
-// make new dir if doens't exist
-let newdir = basedir + '-optimized';
-if (!fs.existsSync(newdir)) {
-    fs.mkdirSync(newdir);
-}
+let {
+  max_width,
+  max_height,
+  basedir
+} = require('./config.js');
+
 console.log("Starting...");
 
 // credit: https://gist.github.com/adamwdraper/4212319
@@ -30,8 +30,13 @@ let walk = (dir, done) => {
             next();
           });
         } else {
-          // do stuff to file here
-          newpath = newdir + '/' + filename;
+          
+          // make new dir if doesn't exist
+          let newdir = dir.replace(basedir, basedir+'-optimized');
+          if (!fs.existsSync(newdir)) {
+            fs.mkdirSync(newdir);
+          }
+          let newpath = newdir + '/' + filename;
           processFile(filepath, newpath);
           next();
         }
@@ -44,8 +49,11 @@ let walk = (dir, done) => {
 let processFile = (file, newpath) => {
   console.log(file);
   if (file.endsWith('.jpg')) {
-    const {width, height} = sizeOf(file);
-    if(width<max_width && height<max_height){
+    const {
+      width,
+      height
+    } = sizeOf(file);
+    if (width < max_width && height < max_height) {
       return;
     }
     sharp(file)
