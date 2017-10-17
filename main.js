@@ -1,36 +1,31 @@
 const sharp = require('sharp');
 const fs = require('fs');
 
-let walkPath = require('./config.js').basedir;
+let basedir = require('./config.js').basedir;
 console.log("Starting...");
 
 // credit: https://gist.github.com/adamwdraper/4212319
 let walk = (dir, done) => {
-  fs.readdir(dir, (error, list) => {
-    if (error) {
-      return done(error);
+  fs.readdir(dir, (err, list) => {
+    if (err) {
+      return done(err);
     }
     let i = 0;
     let next = () => {
-      let file = list[i++];
-
-      if (!file) {
+      let filename = list[i++];
+      if (!filename)
         return done(null);
-      }
 
-      file = dir + '/' + file;
-
-      fs.stat(file, (error, stat) => {
-
+      filepath = dir + '/' + filename;
+      fs.stat(filepath, (err, stat) => {
         if (stat && stat.isDirectory()) {
           // recurse down a directory
-          walk(file, (error) => {
+          walk(filepath, (err) => {
             next();
           });
         } else {
           // do stuff to file here
-          console.log(file);
-
+          processFile(filepath);
           next();
         }
       });
@@ -38,6 +33,18 @@ let walk = (dir, done) => {
     next();
   });
 };
+
+let processFile = (file) => {
+  console.log(file);
+  if (file.endsWith('.jpg')) {
+    sharp(file)
+      .resize(200)
+      .toFile(file, (err, info) => {
+        if (err)
+          console.log(err);
+      })
+  }
+}
 
 // optional command line params
 // source for walk path
@@ -51,12 +58,12 @@ console.log('-------------------------------------------------------------');
 console.log('processing...');
 console.log('-------------------------------------------------------------');
 
-walk(walkPath, function (error) {
-  if (error) {
-    throw error;
+walk(basedir, (err) => {
+  if (err) {
+    throw err;
   } else {
     console.log('-------------------------------------------------------------');
-    console.log('finished.');
+    console.log('Finished.');
     console.log('-------------------------------------------------------------');
   }
 });
