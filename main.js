@@ -2,6 +2,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 
 let basedir = require('./config.js').basedir;
+let newdir = basedir + '-new';
 console.log("Starting...");
 
 // credit: https://gist.github.com/adamwdraper/4212319
@@ -25,7 +26,8 @@ let walk = (dir, done) => {
           });
         } else {
           // do stuff to file here
-          processFile(filepath);
+          newpath = newdir + '/' + filename;
+          processFile(filepath, newpath);
           next();
         }
       });
@@ -34,12 +36,12 @@ let walk = (dir, done) => {
   });
 };
 
-let processFile = (file) => {
+let processFile = (file, newpath) => {
   console.log(file);
   if (file.endsWith('.jpg')) {
     sharp(file)
       .resize(200)
-      .toFile(file, (err, info) => {
+      .toFile(newpath, (err, info) => {
         if (err)
           console.log(err);
       })
