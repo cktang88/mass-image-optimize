@@ -49,8 +49,8 @@ let processFile = (file, newpath) => {
       return;
     }
     sharp(file)
-      .resize(Math.min(width, max_width), null)
-      .resize(null, Math.min(height, max_height))
+      .resize(max_width, max_height)
+      .max()
       .rotate()
       .toFile(newpath, (err, info) => {
         if (err)
