@@ -1,7 +1,7 @@
 let sharp = require('sharp');
 var fs = require('fs');
 
-var walkPath = './';
+var walkPath = require('./config.js').basedir;
 console.log("Starting...");
 
 // credit: https://gist.github.com/adamwdraper/4212319
