@@ -1,7 +1,8 @@
 const sharp = require('sharp');
 const fs = require('fs');
+const sizeOf = require('image-size');
 
-let basedir = require('./config.js').basedir;
+let {max_width, max_height, basedir} = require('./config.js');
 let newdir = basedir + '-new';
 console.log("Starting...");
 
@@ -39,8 +40,12 @@ let walk = (dir, done) => {
 let processFile = (file, newpath) => {
   console.log(file);
   if (file.endsWith('.jpg')) {
+    const {width, height} = sizeOf(file);
+    if(width<max_width && height<max_height){
+      return;
+    }
     sharp(file)
-      .resize(200)
+      //.resize(200)
       .toFile(newpath, (err, info) => {
         if (err)
           console.log(err);
