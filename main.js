@@ -1,10 +1,10 @@
 let sharp = require('sharp');
-console.log("Starting...");
-
 var fs = require('fs');
 
 var walkPath = './';
+console.log("Starting...");
 
+// credit: https://gist.github.com/adamwdraper/4212319
 var walk = function (dir, done) {
     fs.readdir(dir, function (error, list) {
         if (error) {
