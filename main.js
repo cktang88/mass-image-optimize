@@ -30,9 +30,9 @@ let walk = (dir, done) => {
             next();
           });
         } else {
-          
+
           // make new dir if doesn't exist
-          let newdir = dir.replace(basedir, basedir+'-optimized');
+          let newdir = dir.replace(basedir, basedir + '-optimized');
           if (!fs.existsSync(newdir)) {
             fs.mkdirSync(newdir);
           }
@@ -48,7 +48,8 @@ let walk = (dir, done) => {
 
 let processFile = (file, newpath) => {
   console.log(file);
-  if (file.endsWith('.jpg')) {
+  // if image, optimize
+  if (file.endsWith('.jpg') || file.endsWith('.png')) {
     const {
       width,
       height
@@ -64,6 +65,14 @@ let processFile = (file, newpath) => {
         if (err)
           console.log(err);
       })
+  }
+  // else just copy
+  else {
+    fs.createReadStream(file, (err) => {
+      console.log(err);
+    }).pipe(fs.createWriteStream(newpath, (err) => {
+      console.log(err);
+    }));
   }
 }
 
