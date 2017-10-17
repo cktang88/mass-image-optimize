@@ -3,7 +3,11 @@ const fs = require('fs');
 const sizeOf = require('image-size');
 
 let {max_width, max_height, basedir} = require('./config.js');
-let newdir = basedir + '-new';
+// make new dir if doens't exist
+let newdir = basedir + '-optimized';
+if (!fs.existsSync(newdir)) {
+    fs.mkdirSync(newdir);
+}
 console.log("Starting...");
 
 // credit: https://gist.github.com/adamwdraper/4212319
