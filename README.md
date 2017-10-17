@@ -7,7 +7,11 @@ Optimizes all images in a directory recursively, using Node.js and [sharp](https
 create a `config.js` file in the main directory, with this format:
 ```
 // base directory where to optimize
-exports.basedir = 'C:/Users/Apache/Pictures/2015-07';
+module.exports = {
+  basedir: '[base directory path]',
+  max_width: '800', // max image width in pixels after resizing
+  max_height: '800' // max image height in pixels after resizing
+}
 ```
 Then run `npm start`
 
