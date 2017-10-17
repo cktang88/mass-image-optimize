@@ -10,3 +10,7 @@ create a `config.js` file in the main directory, with this format:
 exports.basedir = 'C:/Users/Apache/Pictures/2015-07';
 ```
 Then run `npm start`
+
+### Potential improvements/changes
+---
+* add support for console input for starting directory
