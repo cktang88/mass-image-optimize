@@ -8,10 +8,14 @@ let {
   basedir
 } = require('./config.js');
 
-console.log("Starting...");
-
 // credit: https://gist.github.com/adamwdraper/4212319
 let walk = (dir, done) => {
+  // make new dir if doesn't exist
+  let newdir = dir.replace(basedir, basedir + '-optimized');
+  if (!fs.existsSync(newdir)) {
+    fs.mkdirSync(newdir);
+  }
+  
   fs.readdir(dir, (err, list) => {
     if (err) {
       return done(err);
@@ -31,11 +35,6 @@ let walk = (dir, done) => {
           });
         } else {
 
-          // make new dir if doesn't exist
-          let newdir = dir.replace(basedir, basedir + '-optimized');
-          if (!fs.existsSync(newdir)) {
-            fs.mkdirSync(newdir);
-          }
           let newpath = newdir + '/' + filename;
           processFile(filepath, newpath);
           next();
@@ -85,7 +84,7 @@ process.argv.forEach((val, index, array) => {
 });
 
 console.log('-------------------------------------------------------------');
-console.log('processing...');
+console.log('Processing...');
 console.log('-------------------------------------------------------------');
 
 walk(basedir, (err) => {
