@@ -1,0 +1,1 @@
+Optimizes all images in a directory recursively, using Node.js and [sharp](https://github.com/lovell/sharp)
