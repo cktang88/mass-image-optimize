@@ -14,6 +14,8 @@ let max_width = 1200;
 let max_height = 1200;
 let basedir = path.basename(process.cwd());
 
+// TODO: parse command line options with commander...
+
 
 
 // credit: https://gist.github.com/adamwdraper/4212319
@@ -82,14 +84,6 @@ let processFile = (file, newpath) => {
     }));
   }
 }
-
-// optional command line params
-// source for walk path
-process.argv.forEach((val, index, array) => {
-  if (val.indexOf('source') !== -1) {
-    walkPath = val.split('=')[1];
-  }
-});
 
 console.log('-------------------------------------------------------------');
 console.log('Processing...');
