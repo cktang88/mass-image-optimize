@@ -4,13 +4,17 @@
 const sharp = require('sharp');
 const fs = require('fs');
 const sizeOf = require('image-size');
-const commander = require('commander');
+const program = require('commander');
 
-let {
-  max_width,
-  max_height,
-  basedir
-} = require('./config.js');
+// if program was called with no arguments, show help.
+if (program.args.length === 0) program.help();
+
+// defaults
+let max_width = 1200;
+let max_height = 1200;
+let basedir = path.basename(process.cwd());
+
+
 
 // credit: https://gist.github.com/adamwdraper/4212319
 let walk = (dir, done) => {
