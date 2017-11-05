@@ -2,15 +2,19 @@
   "name": "mass-image-optimize",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "node main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "mio": "./main.js"
   },
   "keywords": [],
   "author": "cktang88",
   "license": "MIT",
   "dependencies": {
+    "commander": "^2.11.0",
     "image-size": "^0.6.1",
     "sharp": "^0.18.4"
   }

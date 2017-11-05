@@ -1,6 +1,10 @@
+#!/usr/bin/env node
+
+'use strict'
 const sharp = require('sharp');
 const fs = require('fs');
 const sizeOf = require('image-size');
+const commander = require('commander');
 
 let {
   max_width,
