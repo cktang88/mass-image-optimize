@@ -14,17 +14,19 @@ let basedir = process.cwd();
 
 // TODO: parse command line options with commander...
 program
-  .option('-d, --dir', 'base directory containing unoptimized files')
-  .option('-w, --max_width', 'maximum width of resulting image (will also scale height, maintaining aspect ratio')
-  .option('-h, --max_height', 'maximum height of resulting image (will also scale width, maintaining aspect ratio')
+  .option('-d, --dir <path>', 'base directory containing unoptimized files')
+  .option('-w, --max_width <n>', 'maximum width of resulting image (will also scale height, maintaining aspect ratio', parseInt)
+  .option('-h, --max_height <n>', 'maximum height of resulting image (will also scale width, maintaining aspect ratio', parseInt)
   .parse(process.argv);
 
 // if program was called with no arguments, show help. (or use defaults?)
-if (!program.dir) {
+console.log(program.dir);
+if (!program.dir || program.dir.length===0) {
   // first arg is node.js, second arg is main.js
   program.help();
   process.exit();
 }
+process.exit();
 
 // credit: https://gist.github.com/adamwdraper/4212319
 let walk = (dir, done) => {
