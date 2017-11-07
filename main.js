@@ -20,13 +20,11 @@ program
   .parse(process.argv);
 
 // if program was called with no arguments, show help. (or use defaults?)
-if (process.argv.length === 2) {
+if (!program.dir) {
   // first arg is node.js, second arg is main.js
   program.help();
   process.exit();
 }
-
-process.exit();
 
 // credit: https://gist.github.com/adamwdraper/4212319
 let walk = (dir, done) => {
