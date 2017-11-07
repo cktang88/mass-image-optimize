@@ -5,18 +5,28 @@ const sharp = require('sharp');
 const fs = require('fs');
 const sizeOf = require('image-size');
 const program = require('commander');
-
-// if program was called with no arguments, show help.
-if (program.args.length === 0) program.help();
+const path = require('path')
 
 // defaults
 let max_width = 1200;
 let max_height = 1200;
-let basedir = path.basename(process.cwd());
+let basedir = process.cwd();
 
 // TODO: parse command line options with commander...
+program
+  .option('-d, --dir', 'base directory containing unoptimized files')
+  .option('-w, --max_width', 'maximum width of resulting image (will also scale height, maintaining aspect ratio')
+  .option('-h, --max_height', 'maximum height of resulting image (will also scale width, maintaining aspect ratio')
+  .parse(process.argv);
 
+// if program was called with no arguments, show help. (or use defaults?)
+if (process.argv.length === 2) {
+  // first arg is node.js, second arg is main.js
+  program.help();
+  process.exit();
+}
 
+process.exit();
 
 // credit: https://gist.github.com/adamwdraper/4212319
 let walk = (dir, done) => {
