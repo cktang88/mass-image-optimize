@@ -1,5 +1,8 @@
 Mass-image-optimizer
 ---
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/cktang88/mass-image-optimize.svg)](https://greenkeeper.io/)
+
 Optimizes all images in a directory recursively, using Node.js and [sharp](https://github.com/lovell/sharp)
 
 ### Dev
