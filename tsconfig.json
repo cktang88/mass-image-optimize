@@ -1,0 +1,6 @@
+// tsconfig.json
+{
+    "compilerOptions": {
+        "target": "es6"
+    }
+}
