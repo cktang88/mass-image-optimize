@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 "use strict";
 import * as sharp from "sharp";
 import * as fs from "fs";
@@ -95,20 +93,12 @@ let processFile = (file: string, newpath: string) => {
   }
 };
 
-console.log("-------------------------------------------------------------");
-console.log("Processing...");
-console.log("-------------------------------------------------------------");
+console.log("PROCESSING...");
 
 walk(basedir, err => {
   if (err) {
     throw err;
   } else {
-    console.log(
-      "-------------------------------------------------------------"
-    );
-    console.log("Finished.");
-    console.log(
-      "-------------------------------------------------------------"
-    );
+    console.log("FINISHED.");
   }
 });
