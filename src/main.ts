@@ -5,11 +5,6 @@ import * as fse from "fs-extra";
 import * as sizeOf from "image-size";
 import * as program from "commander";
 
-// defaults
-let max_width = 1200;
-let max_height = 1200;
-let basedir = process.cwd();
-
 program
   .option(
     "-d, --dir <path>",
@@ -34,22 +29,30 @@ if (!program.dir || program.dir.length === 0) {
   program.help();
   process.exit();
 }
+// defaults
+let max_width = program.max_width || 1200;
+let max_height = program.max_height || 1200;
+let basedir = program.dir || process.cwd();
 
 console.log("PROCESSING...");
+// track # of images processed
+let numimages = 0;
 try {
-  walk(program.dir || basedir);
+  walk(basedir);
 } catch (e) {
   console.error(e);
 }
 
-
-// inspired by: https://gist.github.com/adamwdraper/4212319
 async function walk(dir: string) {
   // make new dir if doesn't exist
-  let newdir = dir.replace(basedir, basedir + "-optimized");
+  let newdir = dir.replace(dir, dir + "-optimized");
   if (!fse.existsSync(newdir)) {
-    console.log(newdir);
-    await fse.mkdir(newdir);
+    console.log("New directory: ", newdir);
+    try {
+      await fse.mkdir(newdir);
+    } catch (err) {
+      console.error(err);
+    }
   }
   const list: string[] = await fse.readdir(dir);
   // depth first traversal
@@ -67,13 +70,14 @@ async function walk(dir: string) {
     }
   });
   await Promise.all(promises);
-  console.log('DONE.')
+  console.log("DONE.", numimages, "images processed.");
 }
 
 async function processFile(file: string, newpath: string) {
   // console.log(file);
   // if image, optimize
   if (file.endsWith(".jpg") || file.endsWith(".png")) {
+    numimages += 1;
     const { width, height } = sizeOf(file);
     // if too small, just copy
     if (width < max_width && height < max_height) {
