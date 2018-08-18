@@ -11,7 +11,10 @@ let basedir = process.cwd();
 
 // TODO: parse command line options with commander...
 program
-  .option("-d, --dir <path>", "base absolute directory containing unoptimized files")
+  .option(
+    "-d, --dir <path>",
+    "base absolute directory containing unoptimized files"
+  )
   .option(
     "-w, --max_width <n>",
     "max width of new image (will also scale height, maintains aspect ratio",
@@ -37,21 +40,21 @@ async function walk(dir: string) {
   // make new dir if doesn't exist
   let newdir = dir.replace(basedir, basedir + "-optimized");
   if (!fse.existsSync(newdir)) {
-    console.log(newdir)
+    console.log(newdir);
     await fse.mkdir(newdir);
   }
 
   await fse.readdir(dir, (err, list: string[]) => {
     if (err) {
-      return err
+      return err;
     }
     let i = 0;
-    (async function next(){
+    (async function next() {
       let filename = list[i++];
-      if (!filename) return null
+      if (!filename) return null;
 
       let filepath = dir + "/" + filename;
-      const stat: fse.Stats = await fse.stat(filepath)
+      const stat: fse.Stats = await fse.stat(filepath);
       if (stat && stat.isDirectory()) {
         // recurse down a directory
         await walk(filepath);
@@ -60,7 +63,7 @@ async function walk(dir: string) {
         let newpath = newdir + "/" + filename;
         await processFile(filepath, newpath);
       }
-      await next()
+      await next();
     })();
   });
 }
