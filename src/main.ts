@@ -1,5 +1,6 @@
 "use strict";
 import * as sharp from "sharp";
+// use fs-extra instead of fs, so that all calls are promisified
 import * as fse from "fs-extra";
 import * as sizeOf from "image-size";
 import * as program from "commander";
@@ -9,7 +10,6 @@ let max_width = 1200;
 let max_height = 1200;
 let basedir = process.cwd();
 
-// TODO: parse command line options with commander...
 program
   .option(
     "-d, --dir <path>",
@@ -17,12 +17,12 @@ program
   )
   .option(
     "-w, --max_width <n>",
-    "max width of new image (will also scale height, maintains aspect ratio",
+    "max width of new image (maintains aspect ratio)",
     parseInt
   )
   .option(
     "-h, --max_height <n>",
-    "max height of new image (will also scale width, maintains aspect ratio",
+    "max height of new image (maintains aspect ratio)",
     parseInt
   )
   .parse(process.argv);
@@ -35,7 +35,15 @@ if (!program.dir || program.dir.length === 0) {
   process.exit();
 }
 
-// credit: https://gist.github.com/adamwdraper/4212319
+console.log("PROCESSING...");
+try {
+  walk(program.dir || basedir);
+} catch (e) {
+  console.error(e);
+}
+
+
+// inspired by: https://gist.github.com/adamwdraper/4212319
 async function walk(dir: string) {
   // make new dir if doesn't exist
   let newdir = dir.replace(basedir, basedir + "-optimized");
@@ -43,29 +51,23 @@ async function walk(dir: string) {
     console.log(newdir);
     await fse.mkdir(newdir);
   }
-
-  await fse.readdir(dir, (err, list: string[]) => {
-    if (err) {
-      return err;
+  const list: string[] = await fse.readdir(dir);
+  // depth first traversal
+  const promises = list.map(async function(filename) {
+    if (!filename) return null;
+    let filepath = dir + "/" + filename;
+    const stat: fse.Stats = await fse.stat(filepath);
+    if (stat && stat.isDirectory()) {
+      // recurse down a directory
+      await walk(filepath);
+    } else {
+      // process new file
+      const newpath = newdir + "/" + filename;
+      await processFile(filepath, newpath);
     }
-    let i = 0;
-    (async function next() {
-      let filename = list[i++];
-      if (!filename) return null;
-
-      let filepath = dir + "/" + filename;
-      const stat: fse.Stats = await fse.stat(filepath);
-      if (stat && stat.isDirectory()) {
-        // recurse down a directory
-        await walk(filepath);
-      } else {
-        // process new file
-        let newpath = newdir + "/" + filename;
-        await processFile(filepath, newpath);
-      }
-      await next();
-    })();
   });
+  await Promise.all(promises);
+  console.log('DONE.')
 }
 
 async function processFile(file: string, newpath: string) {
@@ -97,12 +99,4 @@ async function processFile(file: string, newpath: string) {
       console.error(err);
     }
   }
-}
-
-console.log("PROCESSING...");
-try {
-  walk(basedir);
-  console.log("DONE.");
-} catch (e) {
-  console.error(e);
 }
