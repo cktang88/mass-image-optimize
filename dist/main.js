@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 'use strict';
-var sharp = require('sharp');
-var fs = require('fs');
-var sizeOf = require('image-size');
-var program = require('commander');
-var path = require('path');
+Object.defineProperty(exports, "__esModule", { value: true });
+const sharp = require("sharp");
+const fs = require("fs");
+const sizeOf = require("image-size");
+const program = require("commander");
 // defaults
-var max_width = 1200;
-var max_height = 1200;
-var basedir = process.cwd();
+let max_width = 1200;
+let max_height = 1200;
+let basedir = process.cwd();
 // TODO: parse command line options with commander...
 program
     .option('-d, --dir <path>', 'base directory containing unoptimized files')
@@ -25,32 +25,32 @@ if (!program.dir || program.dir.length === 0) {
 // TODO: convert dir argument to relative dir, relative to current dir?
 process.exit();
 // credit: https://gist.github.com/adamwdraper/4212319
-var walk = function (dir, done) {
+let walk = (dir, done) => {
     // make new dir if doesn't exist
-    var newdir = dir.replace(basedir, basedir + '-optimized');
+    let newdir = dir.replace(basedir, basedir + '-optimized');
     if (!fs.existsSync(newdir)) {
         fs.mkdirSync(newdir);
     }
-    fs.readdir(dir, function (err, list) {
+    fs.readdir(dir, (err, list) => {
         if (err) {
             return done(err);
         }
-        var i = 0;
-        var next = function () {
-            var filename = list[i++];
+        let i = 0;
+        let next = () => {
+            let filename = list[i++];
             if (!filename)
                 return done(null);
-            var filepath = dir + '/' + filename;
-            fs.stat(filepath, function (err, stat) {
+            let filepath = dir + '/' + filename;
+            fs.stat(filepath, (err, stat) => {
                 if (stat && stat.isDirectory()) {
                     // recurse down a directory
-                    walk(filepath, function (err) {
+                    walk(filepath, (err) => {
                         next();
                     });
                 }
                 else {
                     // process new file
-                    var newpath = newdir + '/' + filename;
+                    let newpath = newdir + '/' + filename;
                     processFile(filepath, newpath);
                     next();
                 }
@@ -59,11 +59,11 @@ var walk = function (dir, done) {
         next();
     });
 };
-var processFile = function (file, newpath) {
+let processFile = (file, newpath) => {
     console.log(file);
     // if image, optimize
     if (file.endsWith('.jpg') || file.endsWith('.png')) {
-        var _a = sizeOf(file), width = _a.width, height = _a.height;
+        const { width, height } = sizeOf(file);
         if (width < max_width && height < max_height) {
             return;
         }
@@ -71,24 +71,21 @@ var processFile = function (file, newpath) {
             .resize(max_width, max_height)
             .max()
             .rotate()
-            .toFile(newpath, function (err, info) {
+            .toFile(newpath, (err, info) => {
             if (err)
                 console.log(err);
         });
     }
     // else just copy
     else {
-        fs.createReadStream(file, function (err) {
-            console.log(err);
-        }).pipe(fs.createWriteStream(newpath, function (err) {
-            console.log(err);
-        }));
+        fs.createReadStream(file)
+            .pipe(fs.createWriteStream(newpath));
     }
 };
 console.log('-------------------------------------------------------------');
 console.log('Processing...');
 console.log('-------------------------------------------------------------');
-walk(basedir, function (err) {
+walk(basedir, (err) => {
     if (err) {
         throw err;
     }

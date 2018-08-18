@@ -4,12 +4,12 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "dev": "tsc src/main.ts --out main.js --watch",
-    "start": "node main.js",
+    "dev": "tsc --watch",
+    "start": "node ./dist/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "mio": "./main.js"
+    "mio": "./dist/main.js"
   },
   "keywords": [],
   "author": "cktang88",
