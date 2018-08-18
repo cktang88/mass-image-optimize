@@ -30,22 +30,25 @@ if (!program.dir || program.dir.length === 0) {
   process.exit();
 }
 // defaults
-let max_width = program.max_width || 1200;
-let max_height = program.max_height || 1200;
-let basedir = program.dir || process.cwd();
+const max_width = program.max_width || 1200;
+const max_height = program.max_height || 1200;
+const basedir = program.dir || process.cwd();
 
 console.log("PROCESSING...");
 // track # of images processed
 let numimages = 0;
 try {
-  walk(basedir);
+  walk(basedir)
+  .then(()=>{
+    console.log("DONE.", numimages, "images processed.");
+  })
 } catch (e) {
   console.error(e);
 }
 
 async function walk(dir: string) {
   // make new dir if doesn't exist
-  let newdir = dir.replace(dir, dir + "-optimized");
+  let newdir = dir.replace(basedir, basedir + "-optimized");
   if (!fse.existsSync(newdir)) {
     console.log("New directory: ", newdir);
     try {
@@ -70,7 +73,6 @@ async function walk(dir: string) {
     }
   });
   await Promise.all(promises);
-  console.log("DONE.", numimages, "images processed.");
 }
 
 async function processFile(file: string, newpath: string) {
