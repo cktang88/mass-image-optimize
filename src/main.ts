@@ -1,6 +1,6 @@
 "use strict";
 import * as sharp from "sharp";
-import * as fs from "fs";
+import * as fse from "fs-extra";
 import * as sizeOf from "image-size";
 import * as program from "commander";
 
@@ -11,7 +11,7 @@ let basedir = process.cwd();
 
 // TODO: parse command line options with commander...
 program
-  .option("-d, --dir <path>", "base directory containing unoptimized files")
+  .option("-d, --dir <path>", "base absolute directory containing unoptimized files")
   .option(
     "-w, --max_width <n>",
     "max width of new image (will also scale height, maintains aspect ratio",
@@ -32,54 +32,53 @@ if (!program.dir || program.dir.length === 0) {
   process.exit();
 }
 
-// TODO: convert dir argument to relative dir, relative to current dir?
-process.exit();
-
 // credit: https://gist.github.com/adamwdraper/4212319
-let walk = (dir: string, done: any) => {
+async function walk(dir: string) {
   // make new dir if doesn't exist
   let newdir = dir.replace(basedir, basedir + "-optimized");
-  if (!fs.existsSync(newdir)) {
-    fs.mkdirSync(newdir);
+  if (!fse.existsSync(newdir)) {
+    console.log(newdir)
+    await fse.mkdir(newdir);
   }
 
-  fs.readdir(dir, (err, list: string[]) => {
+  await fse.readdir(dir, (err, list: string[]) => {
     if (err) {
-      return done(err);
+      return err
     }
     let i = 0;
-    let next = () => {
+    (async function next(){
       let filename = list[i++];
-      if (!filename) return done(null);
+      if (!filename) return null
 
       let filepath = dir + "/" + filename;
-      fs.stat(filepath, (err, stat: fs.Stats) => {
-        if (stat && stat.isDirectory()) {
-          // recurse down a directory
-          walk(filepath, err => {
-            next();
-          });
-        } else {
-          // process new file
-          let newpath = newdir + "/" + filename;
-          processFile(filepath, newpath);
-          next();
-        }
-      });
-    };
-    next();
+      const stat: fse.Stats = await fse.stat(filepath)
+      if (stat && stat.isDirectory()) {
+        // recurse down a directory
+        await walk(filepath);
+      } else {
+        // process new file
+        let newpath = newdir + "/" + filename;
+        await processFile(filepath, newpath);
+      }
+      await next()
+    })();
   });
-};
+}
 
-let processFile = (file: string, newpath: string) => {
-  console.log(file);
+async function processFile(file: string, newpath: string) {
+  // console.log(file);
   // if image, optimize
   if (file.endsWith(".jpg") || file.endsWith(".png")) {
     const { width, height } = sizeOf(file);
+    // if too small, just copy
     if (width < max_width && height < max_height) {
-      return;
+      try {
+        await fse.copy(file, newpath);
+      } catch (err) {
+        console.error(err);
+      }
     }
-    sharp(file)
+    await sharp(file)
       .resize(max_width, max_height)
       .max()
       .rotate()
@@ -89,16 +88,18 @@ let processFile = (file: string, newpath: string) => {
   }
   // else just copy
   else {
-    fs.createReadStream(file).pipe(fs.createWriteStream(newpath));
+    try {
+      await fse.copy(file, newpath);
+    } catch (err) {
+      console.error(err);
+    }
   }
-};
+}
 
 console.log("PROCESSING...");
-
-walk(basedir, err => {
-  if (err) {
-    throw err;
-  } else {
-    console.log("FINISHED.");
-  }
-});
+try {
+  walk(basedir);
+  console.log("DONE.");
+} catch (e) {
+  console.error(e);
+}
