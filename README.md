@@ -4,12 +4,12 @@ Optimizes all images in a directory recursively, using Node.js and [sharp](https
 
 ### Dev
 ---
-```
-> git clone https://github.com/cktang88/mass-image-optimize`
-> cd mass-image-optimize
-> npm i
-> npm run dev
-> npm link  //create symlink so that you can use shell command to try it out.
+```bash
+$ git clone https://github.com/cktang88/mass-image-optimize`
+$ cd mass-image-optimize
+$ npm i
+$ npm run dev
+$ npm link  //create symlink so that you can use shell command to try it out.
 ```
 
 ### Usage
