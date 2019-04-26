@@ -4,8 +4,8 @@ Optimizes all images in a directory recursively, using Node.js and [sharp](https
 
 ### Dev
 ---
-```bash
-git clone https://github.com/cktang88/mass-image-optimize`
+```
+git clone https://github.com/cktang88/mass-image-optimize
 cd mass-image-optimize
 npm i
 npm run dev
